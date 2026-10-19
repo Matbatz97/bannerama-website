@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bannerama | Big Banners. Bigger Ideas.</title>
+  <meta name="description" content="Custom PVC banners, mesh banners and roller banners printed from your own artwork. Eyelets, scaffold tube pockets and fast UK delivery.">
+  <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Brand shapes, drawn once and reused with <use> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="curlShade" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+      </linearGradient>
+      <!-- The fold N from the primary wordmark: the diagonal peels back to show its yellow underside -->
+      <symbol id="fold-n" viewBox="0 0 50 100">
+        <path fill="currentColor" d="M0 100V13Q0 0 13 0H20V100Z"/>
+        <path fill="currentColor" d="M30 0H50V100H30Z"/>
+        <path fill="currentColor" d="M7 0H21L30 42V52C27 45 24 38 20 32Z"/>
+        <path fill="#000" opacity=".22" d="M30 52C39 63 44 77 41 90C40 95 37 99 33 100H38C43 96 46 88 45 77C44 67 38 58 30 52Z"/>
+        <path style="fill:var(--fold,#FFE600)" d="M20 32C25 42 28 48 30 52C38 64 43 78 40 89C38 96 34 99 31 100C30 80 27 56 20 32Z"/>
+        <path fill="url(#curlShade)" d="M20 32C27 56 30 80 31 100C34 97 36 92 35 84C33 66 28 48 20 32Z"/>
+      </symbol>
+      <!-- The secondary B mark -->
+      <symbol id="b-mark" viewBox="0 0 100 120">
+        <path fill="currentColor" d="M0 0H56C80 0 92 14 92 30C92 45 82 55 67 58C88 59 100 73 100 89C100 107 86 120 64 120H11C5 120 0 115 0 109Z"/>
+        <path style="fill:var(--fold,#FFE600)" d="M0 82C20 71 44 62 67 58C47 68 30 90 24 120H11C5 120 0 115 0 109Z"/>
+        <path fill="url(#curlShade)" d="M67 58C47 68 30 90 24 120H31C36 94 50 72 67 58Z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="/" class="wordmark" aria-label="Bannerama home">BAN<svg class="fold-n" aria-hidden="true"><use href="#fold-n"/></svg>ERAMA<sup>™</sup></a>
+      <nav class="nav-links" id="navLinks" aria-label="Main">
+        <a href="products.html">Products</a>
+        <a href="#sectors">Sectors</a>
+        <a href="#process">How it works</a>
+        <a href="#artwork-guide">Artwork help</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a href="#order" class="btn btn-purple btn-sm nav-cta">Get a Quote</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">Print banners for a brighter world</p>
+        <h1>Big banners.<br>Bigger ideas.</h1>
+        <p class="lede">High-quality custom banners for businesses, events and everywhere in between. Upload your artwork, choose your finish, and we'll print it in 48 hours.</p>
+        <div class="hero-ctas">
+          <a href="#order" class="btn btn-purple">Get a Quote</a>
+          <a href="products.html" class="btn btn-outline">Explore Products <span aria-hidden="true">→</span></a>
+        </div>
+        <ul class="hero-points">
+          <li>Free artwork check</li>
+          <li>48 hour turnaround</li>
+          <li>UK delivery</li>
+        </ul>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 520 560" class="hero-svg">
+          <rect width="520" height="560" rx="28" fill="#0027FF"/>
+          <rect width="520" height="560" rx="28" fill="url(#heroPattern)" opacity=".18"/>
+          <defs>
+            <pattern id="heroPattern" width="64" height="64" patternUnits="userSpaceOnUse">
+              <path d="M8 56V28Q8 8 28 8Q48 8 48 28V56Z" fill="#FFE600"/>
+            </pattern>
+          </defs>
+          <!-- lamp post -->
+          <rect x="246" y="0" width="28" height="560" fill="#c9ccd6"/>
+          <rect x="252" y="0" width="6" height="560" fill="#fff" opacity=".35"/>
+          <rect x="236" y="70" width="48" height="16" rx="4" fill="#9aa0b4"/>
+          <rect x="236" y="470" width="48" height="16" rx="4" fill="#9aa0b4"/>
+          <!-- left banner arms -->
+          <rect x="60" y="74" width="186" height="8" rx="4" fill="#9aa0b4"/>
+          <rect x="60" y="474" width="186" height="8" rx="4" fill="#9aa0b4"/>
+          <rect x="274" y="74" width="186" height="8" rx="4" fill="#9aa0b4"/>
+          <rect x="274" y="474" width="186" height="8" rx="4" fill="#9aa0b4"/>
+          <!-- purple banner -->
+          <g class="sway-a">
+            <rect x="72" y="82" width="162" height="392" fill="#6A00FF"/>
+            <text transform="translate(206 366) rotate(-90)" font-family="Druk Condensed, Anton" font-size="84" fill="#FFE600" textLength="262" lengthAdjust="spacingAndGlyphs">BANNERAMA</text>
+            <text x="92" y="400" font-family="Druk Condensed, Anton" font-size="21" letter-spacing=".5" fill="#fff">BIG</text>
+            <text x="92" y="422" font-family="Druk Condensed, Anton" font-size="21" letter-spacing=".5" fill="#fff">BANNERS.</text>
+            <text x="92" y="444" font-family="Druk Condensed, Anton" font-size="21" letter-spacing=".5" fill="#fff">BIGGER IDEAS.</text>
+          </g>
+          <!-- yellow banner -->
+          <g class="sway-b">
+            <rect x="286" y="82" width="162" height="392" fill="#FFE600"/>
+            <path d="M286 230Q380 190 448 120V474H286Z" fill="#6A00FF"/>
+            <path d="M286 330Q372 300 448 220Q430 330 448 474H380Q360 380 286 330Z" fill="#FFE600"/>
+            <path d="M448 220Q430 330 448 474H436Q420 330 448 220Z" fill="#000" opacity=".18"/>
+            <text x="304" y="128" font-family="Druk Condensed, Anton" font-size="26" fill="#120E6B">IDEAS</text>
+            <text x="304" y="156" font-family="Druk Condensed, Anton" font-size="26" fill="#120E6B">PRINTED</text>
+            <text x="304" y="184" font-family="Druk Condensed, Anton" font-size="26" fill="#120E6B">BIGGER.</text>
+            <rect x="304" y="196" width="22" height="4" fill="#120E6B"/>
+          </g>
+        </svg>
+        <div class="hero-badge"><b>48</b><span>hour<br>print</span></div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Business</span><span>Events</span><span>Retail</span><span>Construction</span><span>Exhibitions</span><span>Outdoor &amp; beyond</span>
+        <span>Business</span><span>Events</span><span>Retail</span><span>Construction</span><span>Exhibitions</span><span>Outdoor &amp; beyond</span>
+      </div>
+    </div>
+
+    <!-- Scroll stopper: the printer video scrubs with the page scroll -->
+    <section class="scrub" id="scrub" aria-label="Watch your banner being printed">
+      <div class="scrub-sticky">
+        <div class="scrub-copy">
+          <p class="kicker">Straight off the press</p>
+          <h2>From file<br>to <span class="scrub-hl">fabric.</span></h2>
+          <ol class="scrub-stages">
+            <li class="active"><span>01</span><div><b>You upload</b><p>Send your artwork from any device.</p></div></li>
+            <li><span>02</span><div><b>We print it big</b><p>Large-format printers, vivid weatherproof inks.</p></div></li>
+            <li><span>03</span><div><b>Ready to go up</b><p>Finished, checked and shipped in 48 hours.</p></div></li>
+          </ol>
+          <div class="scrub-progress" aria-hidden="true"><i id="scrubBar"></i></div>
+          <p class="scrub-hint" id="scrubHint">Keep scrolling <span aria-hidden="true">↓</span></p>
+        </div>
+        <div class="scrub-frame">
+          <canvas id="scrubCanvas" width="464" height="688" role="img" aria-label="A Bannerama banner printing on a large-format printer"></canvas>
+          <div class="scrub-tag"><svg aria-hidden="true"><use href="#b-mark"/></svg>Printed by Bannerama</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typographic moment -->
+    <section class="statement">
+      <div class="statement-inner">
+        <h2>Same messages.<br>Bigger places.</h2>
+        <div>
+          <p>From a single shopfront banner to a site-wide scaffold wrap, Bannerama prints big, bold banners for businesses across the UK.</p>
+          <p>Every order gets a free artwork check and a proof before we print, so what you see is exactly what goes up.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order builder -->
+    <section id="order" class="section order">
+      <div class="section-head">
+        <p class="kicker">Get a quote</p>
+        <h2>Build your banner.</h2>
+        <p>Live pricing as you go. You won't pay anything until you've approved your proof.</p>
+      </div>
+
+      <form id="orderForm" class="builder" novalidate>
+        <div class="steps">
+          <fieldset class="step">
+            <legend><span class="num">01</span> Banner type</legend>
+            <div class="tiles tiles-3">
+              <label class="tile"><input type="radio" name="type" value="pvc" checked><span><b>PVC</b><small>Heavy-duty 440gsm</small></span></label>
+              <label class="tile"><input type="radio" name="type" value="mesh"><span><b>Mesh</b><small>Wind-through</small></span></label>
+              <label class="tile"><input type="radio" name="type" value="roller"><span><b>Roller</b><small>Pull-up stand</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="num">02</span> Size</legend>
+            <div data-for="pvc mesh">
+              <div class="chips" id="sizePresets">
+                <button type="button" class="chip" data-w="200" data-h="100">2 × 1m</button>
+                <button type="button" class="chip" data-w="300" data-h="100">3 × 1m</button>
+                <button type="button" class="chip" data-w="400" data-h="100">4 × 1m</button>
+                <button type="button" class="chip" data-w="300" data-h="150">3 × 1.5m</button>
+                <button type="button" class="chip" data-w="600" data-h="200">6 × 2m</button>
+              </div>
+              <div class="size-inputs">
+                <label>Width (cm)<input type="number" name="widthCm" min="30" max="2000" value="300" inputmode="numeric"></label>
+                <span class="times">×</span>
+                <label>Height (cm)<input type="number" name="heightCm" min="30" max="500" value="100" inputmode="numeric"></label>
+              </div>
+              <p class="hint">Any size from 30cm up to 20m × 5m.</p>
+            </div>
+            <div data-for="roller" hidden>
+              <div class="tiles tiles-3">
+                <label class="tile"><input type="radio" name="size" value="850x2000" checked><span><b>85 × 200cm</b><small>Most popular</small></span></label>
+                <label class="tile"><input type="radio" name="size" value="1000x2000"><span><b>100 × 200cm</b><small>Wider display</small></span></label>
+                <label class="tile"><input type="radio" name="size" value="1200x2000"><span><b>120 × 200cm</b><small>Maximum impact</small></span></label>
+              </div>
+              <h4 class="sub">Stand</h4>
+              <div class="tiles tiles-2">
+                <label class="tile"><input type="radio" name="stand" value="standard" checked><span><b>Standard</b><small>Lightweight aluminium</small></span></label>
+                <label class="tile"><input type="radio" name="stand" value="premium"><span><b>Premium</b><small>Wide base, swivel feet <em data-price="premiumStand">+£25</em></small></span></label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="step" data-for="pvc mesh">
+            <legend><span class="num">03</span> Finishing</legend>
+            <div class="tiles tiles-3 finishing">
+              <label class="tile">
+                <input type="radio" name="finishing" value="eyelets" checked>
+                <span><span class="fin-icon fin-eyelets" aria-hidden="true"></span><b>Eyelets</b><small>Hemmed edges with brass eyelets every 50cm. <em>Free</em></small></span>
+              </label>
+              <label class="tile">
+                <input type="radio" name="finishing" value="scaffold">
+                <span><span class="fin-icon fin-scaffold" aria-hidden="true"></span><b>Scaffold tube pockets</b><small>7.5cm pockets that slide over 48mm scaffold tube. <em data-price="scaffold">£6/m</em></small></span>
+              </label>
+              <label class="tile">
+                <input type="radio" name="finishing" value="hemmed">
+                <span><span class="fin-icon fin-hemmed" aria-hidden="true"></span><b>Hemmed only</b><small>Reinforced edges, no holes. For framing or tape. <em>Free</em></small></span>
+              </label>
+            </div>
+            <div class="pocket-edges" id="pocketEdges" hidden>
+              <h4 class="sub">Which edges get pockets?</h4>
+              <div class="chips">
+                <label class="chip-radio"><input type="radio" name="pocketEdges" value="topbottom" checked><span>Top + bottom</span></label>
+                <label class="chip-radio"><input type="radio" name="pocketEdges" value="sides"><span>Left + right</span></label>
+                <label class="chip-radio"><input type="radio" name="pocketEdges" value="all"><span>All four</span></label>
+              </div>
+            </div>
+            <label class="check"><input type="checkbox" name="cableTies"><span>Add cable ties for fitting <em data-price="cableTies">£4 per 10</em></span></label>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="num" data-step-num>04</span> Your artwork</legend>
+            <label class="dropzone" id="dropzone">
+              <input type="file" id="artworkInput" accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.ai,.eps,.svg">
+              <span class="dz-icon" aria-hidden="true">↑</span>
+              <b>Drop your artwork here or <u>browse</u></b>
+              <small>PDF, AI, EPS, SVG, TIFF, PNG or JPG, up to 250 MB</small>
+            </label>
+            <div class="upload-status" id="uploadStatus" hidden>
+              <div class="file-row">
+                <span class="file-badge" id="fileBadge">PDF</span>
+                <div class="file-meta"><b id="fileName"></b><small id="fileSize"></small></div>
+                <button type="button" class="link" id="removeFile">Remove</button>
+              </div>
+              <div class="progress"><i id="progressBar"></i></div>
+              <ul class="checks" id="artChecks"></ul>
+            </div>
+            <p class="hint">No artwork yet? Upload what you have and tell us in the notes. Every file gets a free check before we print.</p>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="num" data-step-num>05</span> Quantity</legend>
+            <div class="qty">
+              <button type="button" class="qty-btn" data-qty="-1" aria-label="Fewer">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="500" inputmode="numeric" aria-label="Quantity">
+              <button type="button" class="qty-btn" data-qty="1" aria-label="More">+</button>
+            </div>
+            <label class="block">Notes for our print team <span class="opt">(optional)</span>
+              <textarea name="notes" rows="3" placeholder="e.g. Please add a 5cm white border, needed by Friday"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend><span class="num" data-step-num>06</span> Your details</legend>
+            <div class="grid-2">
+              <label class="block">Name<input type="text" name="customerName" autocomplete="name" required></label>
+              <label class="block">Email<input type="email" name="email" autocomplete="email" required></label>
+              <label class="block">Phone <span class="opt">(optional)</span><input type="tel" name="phone" autocomplete="tel"></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <aside class="summary">
+          <div class="summary-card">
+            <p class="summary-title">Your banner</p>
+            <div class="preview-stage" id="previewStage">
+              <div class="preview" id="preview">
+                <div class="preview-art" id="previewArt"><span>Your artwork</span></div>
+                <div class="preview-finish" id="previewFinish"></div>
+              </div>
+              <div class="roller-base" id="rollerBase" hidden></div>
+            </div>
+            <dl class="spec" id="spec"></dl>
+            <div class="totals">
+              <div><span>Each</span><b id="unitPrice">£0.00</b></div>
+              <div><span>Subtotal</span><b id="subtotal">£0.00</b></div>
+              <div><span>VAT 20%</span><b id="vat">£0.00</b></div>
+              <div class="grand"><span>Total</span><b id="total">£0.00</b></div>
+            </div>
+            <p class="form-error" id="formError" role="alert" hidden></p>
+            <button type="submit" class="btn btn-yellow btn-block" id="submitBtn">Place order</button>
+            <p class="fine">No payment until we've checked your artwork and you've approved the proof.</p>
+          </div>
+        </aside>
+      </form>
+
+      <div class="success" id="success" hidden>
+        <svg class="success-mark" aria-hidden="true"><use href="#b-mark"/></svg>
+        <h3>Order <span id="orderId"></span> received.</h3>
+        <p>We'll check your artwork and email a proof to <b id="orderEmail"></b> within one working day.</p>
+        <button class="btn btn-purple" id="newOrder" type="button">Order another banner</button>
+      </div>
+    </section>
+
+    <!-- Sectors -->
+    <section id="sectors" class="section">
+      <div class="section-head">
+        <p class="kicker">Who we print for</p>
+        <h2>Business, events, retail &amp; beyond.</h2>
+      </div>
+      <div class="sectors">
+        <article class="sector">
+          <div class="sector-art g-fold" aria-hidden="true"></div>
+          <h3>Retail</h3>
+          <p>Shopfront PVC banners for openings, sales and seasonal launches, finished with eyelets so they go up in minutes.</p>
+          <button class="text-link" data-pick="pvc">Retail banners <span aria-hidden="true">→</span></button>
+        </article>
+        <article class="sector">
+          <div class="sector-art g-flex" aria-hidden="true"></div>
+          <h3>Events</h3>
+          <p>Stage backdrops, entrance banners and roller banners that pack into a bag and travel to the next show.</p>
+          <button class="text-link" data-pick="roller">Event banners <span aria-hidden="true">→</span></button>
+        </article>
+        <article class="sector">
+          <div class="sector-art g-pattern" aria-hidden="true"></div>
+          <h3>Construction</h3>
+          <p>Wind-through mesh for scaffolding and hoardings, with scaffold tube pockets for a tight, flat fit.</p>
+          <button class="text-link" data-pick="mesh">Site banners <span aria-hidden="true">→</span></button>
+        </article>
+        <article class="sector">
+          <div class="sector-art g-type" aria-hidden="true"><span>Ideas<br>printed<br>bigger.</span></div>
+          <h3>Exhibitions</h3>
+          <p>Premium roller banners with swivel feet, for stands that need to look sharp from the aisle.</p>
+          <button class="text-link" data-pick="roller">Exhibition banners <span aria-hidden="true">→</span></button>
+        </article>
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section id="process" class="process">
+      <div class="process-inner">
+        <div class="section-head on-dark">
+          <p class="kicker">Our process</p>
+          <h2>Custom banners made simple.</h2>
+        </div>
+        <ol class="process-steps">
+          <li><span class="pnum">01</span><b>Choose</b><span>Pick PVC, mesh or a roller banner.</span></li>
+          <li><span class="pnum">02</span><b>Size</b><span>Any custom size, or a standard roller width.</span></li>
+          <li><span class="pnum">03</span><b>Finish</b><span>Eyelets, scaffold tube pockets or hemmed edges.</span></li>
+          <li><span class="pnum">04</span><b>Upload</b><span>Send your artwork in any common format.</span></li>
+          <li><span class="pnum">05</span><b>Proof</b><span>We check it for free and email a proof to approve.</span></li>
+          <li><span class="pnum">06</span><b>Delivered</b><span>Printed in 48 hours and sent to your door.</span></li>
+        </ol>
+        <a href="#order" class="btn btn-yellow">Get a Quote</a>
+      </div>
+    </section>
+
+    <!-- Feature callout -->
+    <section class="section callout">
+      <div class="callout-art" aria-hidden="true">
+        <svg viewBox="0 0 100 120"><use href="#b-mark"/></svg>
+      </div>
+      <div class="callout-copy">
+        <p class="kicker">One team, file to fixing</p>
+        <h2>Real people check every file.</h2>
+        <p>Before anything hits the printer, our team checks your artwork for resolution, bleed and safe areas, and tells you straight away if something needs fixing.</p>
+        <div class="stats">
+          <div><b>48hr</b><span>Print turnaround</span></div>
+          <div><b>£0</b><span>Artwork check</span></div>
+          <div><b>20m</b><span>Max banner width</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Artwork guide -->
+    <section id="artwork-guide" class="section guide">
+      <div class="section-head">
+        <p class="kicker">Artwork help</p>
+        <h2>Get your file print-ready.</h2>
+      </div>
+      <div class="guide-grid">
+        <div><h3>Best formats</h3><p>Print-ready PDF with fonts outlined is best. AI, EPS and SVG work too. For photos, use TIFF or high-quality JPG.</p></div>
+        <div><h3>Resolution</h3><p>At full size, 72–100 DPI is plenty for PVC and mesh banners seen from a distance. Roller banners are viewed close up, so aim for 150 DPI.</p></div>
+        <div><h3>Safe area</h3><p>Keep text and logos 5cm from the edges. Eyelets and scaffold pockets sit in that border.</p></div>
+        <div><h3>Colour</h3><p>Supply CMYK if you can. RGB files are fine, but very bright colours may print slightly softer.</p></div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section id="contact" class="cta">
+      <div class="cta-inner">
+        <h2>Let's talk about<br>your next banner.</h2>
+        <div class="cta-side">
+          <p>Questions about sizes, materials or artwork? Our team is here to help.</p>
+          <a class="cta-line" href="tel:08000000000">0800 000 0000</a>
+          <a class="cta-line small" href="mailto:hello@bannerama.co.uk">hello@bannerama.co.uk</a>
+          <a href="#order" class="btn btn-yellow">Get a Quote</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg class="footer-mark" aria-hidden="true"><use href="#b-mark"/></svg>
+          <span class="footer-tagline">Bold print<br>for a brighter<br>world.</span>
+        </div>
+        <p>Custom PVC, mesh and roller banners, printed in the UK.</p>
+      </div>
+      <div>
+        <h4>Products</h4>
+        <ul><li><a href="#order" data-pick="pvc">PVC banners</a></li><li><a href="#order" data-pick="mesh">Mesh banners</a></li><li><a href="#order" data-pick="roller">Roller banners</a></li></ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul><li><a href="#artwork-guide">Artwork guide</a></li><li><a href="#process">How it works</a></li><li><a href="#contact">Contact us</a></li></ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul><li><a href="tel:08000000000">0800 000 0000</a></li><li><a href="mailto:hello@bannerama.co.uk">hello@bannerama.co.uk</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span class="wordmark wordmark-sm">BAN<svg class="fold-n" aria-hidden="true"><use href="#fold-n"/></svg>ERAMA</span>
+      <span>© <span id="year"></span> Bannerama. Big banners. Bigger ideas.</span>
+    </div>
+  </footer>
+
+  <script src="pricing.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

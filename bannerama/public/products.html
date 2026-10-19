@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banners | Bannerama</title>
+  <meta name="description" content="PVC banners, mesh banners and roller banners from Bannerama. Custom sizes, eyelets, scaffold tube pockets and 48 hour printing.">
+  <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Brand shapes, drawn once and reused with <use> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="curlShade" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0"/>
+        <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+      </linearGradient>
+      <!-- The fold N from the primary wordmark: the diagonal peels back to show its yellow underside -->
+      <symbol id="fold-n" viewBox="0 0 50 100">
+        <path fill="currentColor" d="M0 100V13Q0 0 13 0H20V100Z"/>
+        <path fill="currentColor" d="M30 0H50V100H30Z"/>
+        <path fill="currentColor" d="M7 0H21L30 42V52C27 45 24 38 20 32Z"/>
+        <path fill="#000" opacity=".22" d="M30 52C39 63 44 77 41 90C40 95 37 99 33 100H38C43 96 46 88 45 77C44 67 38 58 30 52Z"/>
+        <path style="fill:var(--fold,#FFE600)" d="M20 32C25 42 28 48 30 52C38 64 43 78 40 89C38 96 34 99 31 100C30 80 27 56 20 32Z"/>
+        <path fill="url(#curlShade)" d="M20 32C27 56 30 80 31 100C34 97 36 92 35 84C33 66 28 48 20 32Z"/>
+      </symbol>
+      <!-- The secondary B mark -->
+      <symbol id="b-mark" viewBox="0 0 100 120">
+        <path fill="currentColor" d="M0 0H56C80 0 92 14 92 30C92 45 82 55 67 58C88 59 100 73 100 89C100 107 86 120 64 120H11C5 120 0 115 0 109Z"/>
+        <path style="fill:var(--fold,#FFE600)" d="M0 82C20 71 44 62 67 58C47 68 30 90 24 120H11C5 120 0 115 0 109Z"/>
+        <path fill="url(#curlShade)" d="M67 58C47 68 30 90 24 120H31C36 94 50 72 67 58Z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="/" class="wordmark" aria-label="Bannerama home">BAN<svg class="fold-n" aria-hidden="true"><use href="#fold-n"/></svg>ERAMA<sup>™</sup></a>
+      <nav class="nav-links" id="navLinks" aria-label="Main">
+        <a href="products.html" aria-current="page">Products</a>
+        <a href="/#sectors">Sectors</a>
+        <a href="/#process">How it works</a>
+        <a href="/#artwork-guide">Artwork help</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+      <a href="/#order" class="btn btn-purple btn-sm nav-cta">Get a Quote</a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">Menu</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="page-hero-inner">
+        <p class="kicker">Our banners</p>
+        <h1>Banners for<br>every place.</h1>
+        <p class="lede">Three banner types, printed from your artwork in 48 hours. Choose the one that suits where it's going up.</p>
+        <nav class="jump" aria-label="Banner types">
+          <a href="#pvc">PVC banners</a>
+          <a href="#mesh">Mesh banners</a>
+          <a href="#roller">Roller banners</a>
+          <a href="#prices">Price list</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section price-list" id="prices">
+      <div class="section-head">
+        <p class="kicker">Clear pricing</p>
+        <h2>Price per square metre.</h2>
+        <p>No hidden extras. PVC and mesh banners are priced by the square metre, and the panels below work out your exact price as you type.</p>
+      </div>
+      <div class="price-grid">
+        <div class="price-card">
+          <h3>Banner rates</h3>
+          <table class="ptable">
+            <thead><tr><th>Banner</th><th>Per m²</th><th>Minimum order</th></tr></thead>
+            <tbody data-rates></tbody>
+          </table>
+          <h3 class="ptable-gap">Finishing &amp; extras</h3>
+          <table class="ptable">
+            <tbody data-extras></tbody>
+          </table>
+        </div>
+        <div class="price-card">
+          <h3>Popular sizes</h3>
+          <table class="ptable">
+            <thead><tr><th>Size</th><th>Area</th><th>PVC</th><th>Mesh</th></tr></thead>
+            <tbody data-examples></tbody>
+          </table>
+          <h3 class="ptable-gap">Roller banners</h3>
+          <table class="ptable">
+            <thead><tr><th>Size</th><th>Each</th><th>Works out at</th></tr></thead>
+            <tbody data-rollers></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="hint price-note">Prices exclude VAT unless marked. Eyelets and hemmed edges are free on every PVC and mesh banner.</p>
+    </section>
+
+    <section class="pdetail" id="pvc">
+      <div class="pdetail-art product-art art-pvc" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="pdetail-copy">
+        <p class="kicker">The all-rounder</p>
+        <h2>PVC banners</h2>
+        <p>Heavy-duty 440gsm PVC that's waterproof, tear-resistant and stays bright. Use it for shopfronts, events, fences and railings, indoors or out.</p>
+        <dl class="spec-list">
+          <div><dt>Material</dt><dd>440gsm PVC, matt finish</dd></div>
+          <div><dt>Sizes</dt><dd>Any size from 30cm up to 20m × 5m</dd></div>
+          <div><dt>Finishing</dt><dd>Eyelets every 50cm, scaffold tube pockets or hemmed edges</dd></div>
+          <div><dt>Best for</dt><dd>Shopfronts, events, fences, railings</dd></div>
+        </dl>
+      </div>
+    <form class="quick" data-type="pvc" novalidate>
+      <div class="quick-col">
+        <p class="quick-label"><span>1</span> Choose your size</p>
+        <div class="chips" data-presets>
+          <button type="button" class="chip" data-w="200" data-h="100">2 × 1m</button>
+          <button type="button" class="chip" data-w="300" data-h="100">3 × 1m</button>
+          <button type="button" class="chip" data-w="400" data-h="100">4 × 1m</button>
+          <button type="button" class="chip" data-w="600" data-h="200">6 × 2m</button>
+        </div>
+        <div class="size-inputs">
+          <label>Width (cm)<input type="number" name="widthCm" min="30" max="2000" value="300" inputmode="numeric"></label>
+          <span class="times">×</span>
+          <label>Height (cm)<input type="number" name="heightCm" min="30" max="500" value="100" inputmode="numeric"></label>
+        </div>
+        <p class="quick-label sub-label">Finishing</p>
+        <div class="chips">
+          <label class="chip-radio"><input type="radio" name="finishing" value="eyelets" checked><span>Eyelets</span></label>
+          <label class="chip-radio"><input type="radio" name="finishing" value="scaffold"><span>Scaffold pockets</span></label>
+          <label class="chip-radio"><input type="radio" name="finishing" value="hemmed"><span>Hemmed</span></label>
+        </div>
+      </div>
+      <div class="quick-col quick-price">
+        <p class="quick-label"><span>2</span> Your price</p>
+        <div class="rate-big"><b data-rate>£0.00</b><span>per m²</span></div>
+        <dl class="breakdown" data-breakdown></dl>
+        <div class="quick-total"><span>Total inc VAT</span><b data-total>£0.00</b></div>
+      </div>
+      <div class="quick-col">
+        <p class="quick-label"><span>3</span> Upload your artwork</p>
+        <label class="dropzone dz-small">
+          <input type="file" name="artwork" accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.ai,.eps,.svg">
+          <span class="dz-icon" aria-hidden="true">↑</span>
+          <b>Drop artwork here or <u>browse</u></b>
+          <small>PDF, AI, EPS, SVG, TIFF, PNG or JPG, up to 250 MB</small>
+        </label>
+        <div class="quick-file" data-file hidden>
+          <div class="file-row"><span class="file-badge" data-badge></span><div class="file-meta"><b data-name></b><small data-status></small></div><button type="button" class="link" data-remove>Remove</button></div>
+          <div class="progress"><i data-progress></i></div>
+        </div>
+        <a class="btn btn-purple btn-block" data-continue href="/?type=pvc#order">Continue to order</a>
+        <p class="hint">No artwork ready? You can continue and add it later.</p>
+      </div>
+    </form>
+    </section>
+
+    <section class="pdetail reverse" id="mesh">
+      <div class="pdetail-art product-art art-mesh" aria-hidden="true"></div>
+      <div class="pdetail-copy">
+        <p class="kicker">Built for the wind</p>
+        <h2>Mesh banners</h2>
+        <p>Perforated mesh lets the wind pass straight through, so the banner stays put on scaffolding, building wraps and exposed fences without acting like a sail.</p>
+        <dl class="spec-list">
+          <div><dt>Material</dt><dd>Heavy-duty polyester mesh, about 30% open</dd></div>
+          <div><dt>Sizes</dt><dd>Any size from 30cm up to 20m × 5m</dd></div>
+          <div><dt>Finishing</dt><dd>Eyelets every 50cm, scaffold tube pockets or hemmed edges</dd></div>
+          <div><dt>Best for</dt><dd>Scaffolding, construction sites, high fences, building wraps</dd></div>
+        </dl>
+      </div>
+    <form class="quick" data-type="mesh" novalidate>
+      <div class="quick-col">
+        <p class="quick-label"><span>1</span> Choose your size</p>
+        <div class="chips" data-presets>
+          <button type="button" class="chip" data-w="200" data-h="100">2 × 1m</button>
+          <button type="button" class="chip" data-w="300" data-h="100">3 × 1m</button>
+          <button type="button" class="chip" data-w="400" data-h="100">4 × 1m</button>
+          <button type="button" class="chip" data-w="600" data-h="200">6 × 2m</button>
+        </div>
+        <div class="size-inputs">
+          <label>Width (cm)<input type="number" name="widthCm" min="30" max="2000" value="300" inputmode="numeric"></label>
+          <span class="times">×</span>
+          <label>Height (cm)<input type="number" name="heightCm" min="30" max="500" value="100" inputmode="numeric"></label>
+        </div>
+        <p class="quick-label sub-label">Finishing</p>
+        <div class="chips">
+          <label class="chip-radio"><input type="radio" name="finishing" value="eyelets" checked><span>Eyelets</span></label>
+          <label class="chip-radio"><input type="radio" name="finishing" value="scaffold"><span>Scaffold pockets</span></label>
+          <label class="chip-radio"><input type="radio" name="finishing" value="hemmed"><span>Hemmed</span></label>
+        </div>
+      </div>
+      <div class="quick-col quick-price">
+        <p class="quick-label"><span>2</span> Your price</p>
+        <div class="rate-big"><b data-rate>£0.00</b><span>per m²</span></div>
+        <dl class="breakdown" data-breakdown></dl>
+        <div class="quick-total"><span>Total inc VAT</span><b data-total>£0.00</b></div>
+      </div>
+      <div class="quick-col">
+        <p class="quick-label"><span>3</span> Upload your artwork</p>
+        <label class="dropzone dz-small">
+          <input type="file" name="artwork" accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.ai,.eps,.svg">
+          <span class="dz-icon" aria-hidden="true">↑</span>
+          <b>Drop artwork here or <u>browse</u></b>
+          <small>PDF, AI, EPS, SVG, TIFF, PNG or JPG, up to 250 MB</small>
+        </label>
+        <div class="quick-file" data-file hidden>
+          <div class="file-row"><span class="file-badge" data-badge></span><div class="file-meta"><b data-name></b><small data-status></small></div><button type="button" class="link" data-remove>Remove</button></div>
+          <div class="progress"><i data-progress></i></div>
+        </div>
+        <a class="btn btn-purple btn-block" data-continue href="/?type=mesh#order">Continue to order</a>
+        <p class="hint">No artwork ready? You can continue and add it later.</p>
+      </div>
+    </form>
+    </section>
+
+    <section class="pdetail" id="roller">
+      <div class="pdetail-art product-art art-roller" aria-hidden="true"><span></span></div>
+      <div class="pdetail-copy">
+        <p class="kicker">Up in 30 seconds</p>
+        <h2>Roller banners</h2>
+        <p>A pull-up display that arrives printed and fitted in its stand. Pull it up, clip the top pole in place and you're done. Packs into its carry bag for the next event.</p>
+        <dl class="spec-list">
+          <div><dt>Sizes</dt><dd>85 × 200cm, 100 × 200cm or 120 × 200cm</dd></div>
+          <div><dt>Stand</dt><dd>Standard aluminium, or premium with a wide base and swivel feet</dd></div>
+          <div><dt>Included</dt><dd>Printed banner, stand, pole and carry bag</dd></div>
+          <div><dt>Best for</dt><dd>Exhibitions, receptions, events, conferences</dd></div>
+        </dl>
+      </div>
+    <form class="quick" data-type="roller" novalidate>
+      <div class="quick-col">
+        <p class="quick-label"><span>1</span> Choose your size</p>
+        <div class="chips">
+          <label class="chip-radio"><input type="radio" name="size" value="850x2000" checked><span>85 × 200cm</span></label>
+          <label class="chip-radio"><input type="radio" name="size" value="1000x2000"><span>100 × 200cm</span></label>
+          <label class="chip-radio"><input type="radio" name="size" value="1200x2000"><span>120 × 200cm</span></label>
+        </div>
+        <p class="quick-label sub-label">Stand</p>
+        <div class="chips">
+          <label class="chip-radio"><input type="radio" name="stand" value="standard" checked><span>Standard</span></label>
+          <label class="chip-radio"><input type="radio" name="stand" value="premium"><span>Premium</span></label>
+        </div>
+      </div>
+      <div class="quick-col quick-price">
+        <p class="quick-label"><span>2</span> Your price</p>
+        <div class="rate-big"><b data-rate>£0.00</b><span>per m²</span></div>
+        <dl class="breakdown" data-breakdown></dl>
+        <div class="quick-total"><span>Total inc VAT</span><b data-total>£0.00</b></div>
+      </div>
+      <div class="quick-col">
+        <p class="quick-label"><span>3</span> Upload your artwork</p>
+        <label class="dropzone dz-small">
+          <input type="file" name="artwork" accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.ai,.eps,.svg">
+          <span class="dz-icon" aria-hidden="true">↑</span>
+          <b>Drop artwork here or <u>browse</u></b>
+          <small>PDF, AI, EPS, SVG, TIFF, PNG or JPG, up to 250 MB</small>
+        </label>
+        <div class="quick-file" data-file hidden>
+          <div class="file-row"><span class="file-badge" data-badge></span><div class="file-meta"><b data-name></b><small data-status></small></div><button type="button" class="link" data-remove>Remove</button></div>
+          <div class="progress"><i data-progress></i></div>
+        </div>
+        <a class="btn btn-purple btn-block" data-continue href="/?type=roller#order">Continue to order</a>
+        <p class="hint">No artwork ready? You can continue and add it later.</p>
+      </div>
+    </form>
+    </section>
+
+    <section class="section finishes">
+      <div class="section-head">
+        <p class="kicker">Finishing options</p>
+        <h2>Ready to hang.</h2>
+        <p>Every PVC and mesh banner comes finished. Choose how it fixes in place.</p>
+      </div>
+      <div class="finish-grid">
+        <div class="finish-card">
+          <span class="fin-icon fin-eyelets" aria-hidden="true"></span>
+          <h3>Eyelets</h3>
+          <p>Hemmed edges with brass eyelets every 50cm. Tie up with cable ties or bungees. <b>Free</b></p>
+        </div>
+        <div class="finish-card">
+          <span class="fin-icon fin-scaffold" aria-hidden="true"></span>
+          <h3>Scaffold tube pockets</h3>
+          <p>7.5cm pockets that slide over standard 48mm scaffold tube, top and bottom, sides or all four edges. <b data-price="scaffold">£6 per metre</b></p>
+        </div>
+        <div class="finish-card">
+          <span class="fin-icon fin-hemmed" aria-hidden="true"></span>
+          <h3>Hemmed only</h3>
+          <p>Reinforced edges with no holes, for framing systems or tape. <b>Free</b></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-inner">
+        <h2>Not sure which<br>banner you need?</h2>
+        <div class="cta-side">
+          <p>Tell us where it's going and we'll recommend the right material, size and fixings.</p>
+          <a class="cta-line" href="tel:08000000000">0800 000 0000</a>
+          <a class="cta-line small" href="mailto:hello@bannerama.co.uk">hello@bannerama.co.uk</a>
+          <a href="/#order" class="btn btn-yellow">Get a Quote</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg class="footer-mark" aria-hidden="true"><use href="#b-mark"/></svg>
+          <span class="footer-tagline">Bold print<br>for a brighter<br>world.</span>
+        </div>
+        <p>Custom PVC, mesh and roller banners, printed in the UK.</p>
+      </div>
+      <div>
+        <h4>Products</h4>
+        <ul><li><a href="/?type=pvc#order">PVC banners</a></li><li><a href="/?type=mesh#order">Mesh banners</a></li><li><a href="/?type=roller#order">Roller banners</a></li></ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul><li><a href="/#artwork-guide">Artwork guide</a></li><li><a href="/#process">How it works</a></li><li><a href="/#contact">Contact us</a></li></ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul><li><a href="tel:08000000000">0800 000 0000</a></li><li><a href="mailto:hello@bannerama.co.uk">hello@bannerama.co.uk</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span class="wordmark wordmark-sm">BAN<svg class="fold-n" aria-hidden="true"><use href="#fold-n"/></svg>ERAMA</span>
+      <span>© <span id="year"></span> Bannerama. Big banners. Bigger ideas.</span>
+    </div>
+  </footer>
+
+  <script src="pricing.js"></script>
+  <script src="products.js"></script>
+</body>
+</html>

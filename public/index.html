@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks — Clean & Simple To-Do</title>
+  <meta name="description" content="A clean, simple, and fast To-Do application built with Node.js.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <header class="app-header">
+      <div class="header-top">
+        <span class="date-badge" id="currentDate">Today</span>
+        <span class="status-badge" id="completionRate">0/0 completed</span>
+      </div>
+      <h1 class="app-title">Tasks</h1>
+      <p class="app-subtitle">Stay focused, organized, and calm.</p>
+    </header>
+
+    <main class="todo-card">
+      <!-- Add Todo Form -->
+      <form id="todoForm" class="todo-form">
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="todoInput" 
+            class="todo-input" 
+            placeholder="Add a new task..." 
+            autocomplete="off" 
+            maxlength="200"
+            required
+          />
+          <button type="submit" id="addButton" class="btn-add" aria-label="Add Task">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Filter Tabs -->
+      <nav class="filter-nav" aria-label="Task filters">
+        <button type="button" class="filter-btn active" data-filter="all">
+          All <span class="counter" id="countAll">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="active">
+          Active <span class="counter" id="countActive">0</span>
+        </button>
+        <button type="button" class="filter-btn" data-filter="completed">
+          Completed <span class="counter" id="countCompleted">0</span>
+        </button>
+      </nav>
+
+      <!-- Task List Container -->
+      <div class="list-container">
+        <ul id="todoList" class="todo-list" aria-live="polite"></ul>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <p class="empty-title">All caught up!</p>
+          <p class="empty-desc">No tasks to display in this view.</p>
+        </div>
+      </div>
+
+      <!-- Footer Bar -->
+      <footer class="todo-footer">
+        <span id="itemsLeft" class="items-left">0 items remaining</span>
+        <button type="button" id="clearCompletedBtn" class="btn-clear" style="display: none;">
+          Clear completed
+        </button>
+      </footer>
+    </main>
+
+    <footer class="page-footer">
+      Powered by Node.js
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

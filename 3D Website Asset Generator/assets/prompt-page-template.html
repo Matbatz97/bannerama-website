@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll-Stop Prompts — {{OBJECT_NAME}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-body: 'Archivo', sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --lime: #BFF549;
+      --bg: #02040a;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.06);
+      --text-secondary: #99A1AF;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    ::selection { background-color: var(--lime); color: #000; }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--lime); }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb-1 {
+      position: fixed; top: -15%; left: -10%; width: 700px; height: 700px;
+      background: var(--lime); border-radius: 50%; filter: blur(280px);
+      opacity: 0.06; pointer-events: none; z-index: 0;
+      animation: orbFloat 20s ease-in-out infinite;
+    }
+
+    .bg-orb-2 {
+      position: fixed; bottom: -15%; right: -10%; width: 500px; height: 500px;
+      background: #FACC15; border-radius: 50%; filter: blur(220px);
+      opacity: 0.05; pointer-events: none; z-index: 0;
+      animation: orbFloat 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(40px, 25px); }
+    }
+
+    .confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+
+    /* Two-column shell: 3D generator left, prompts right */
+    .shell {
+      position: relative; z-index: 1; display: grid;
+      grid-template-columns: minmax(380px, 46%) minmax(0, 1fr);
+      gap: 1.75rem; height: 100vh; max-width: 1600px; margin: 0 auto;
+      padding: 1.5rem 1.75rem 0;
+    }
+
+    /* ---------- LEFT: 3D generator ---------- */
+    .generator {
+      display: flex; flex-direction: column; gap: 1rem; min-height: 0;
+      padding-bottom: 1.5rem; overflow-y: auto;
+    }
+    .generator::-webkit-scrollbar { width: 6px; }
+
+    .gen-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .gen-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .gen-title span { color: var(--text-secondary); font-weight: 400; }
+
+    .viewport {
+      position: relative; width: 100%; aspect-ratio: 16 / 9; flex-shrink: 0;
+      border-radius: 22px; overflow: hidden; background: #fff;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    .viewport canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    .viewport canvas:active { cursor: grabbing; }
+    .viewport-hud {
+      position: absolute; left: 0.75rem; bottom: 0.75rem; display: flex; gap: 0.4rem;
+      pointer-events: none;
+    }
+    .hud-chip {
+      padding: 0.25rem 0.6rem; border-radius: 980px; font-family: var(--font-mono);
+      font-size: 0.62rem; background: rgba(2,4,10,0.78); color: #fff; backdrop-filter: blur(8px);
+    }
+    .hud-chip.part { background: var(--lime); color: #000; font-weight: 500; display: none; }
+    .viewport-error {
+      position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+      padding: 1.5rem; text-align: center; color: #333; font-size: 0.8rem; line-height: 1.5;
+    }
+
+    .gen-card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px;
+      padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.9rem;
+    }
+
+    .ctl-row { display: flex; flex-direction: column; gap: 0.45rem; }
+    .ctl-label {
+      display: flex; justify-content: space-between; font-size: 0.6rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary);
+    }
+    .ctl-label output { font-family: var(--font-mono); color: var(--lime); letter-spacing: 0; }
+
+    input[type=range] { width: 100%; accent-color: var(--lime); cursor: pointer; }
+
+    .seg {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; padding: 3px;
+      border-radius: 12px; background: rgba(0,0,0,0.35); border: 1px solid var(--card-border);
+    }
+    .seg button {
+      padding: 0.45rem 0.4rem; border: none; border-radius: 9px; background: transparent;
+      color: var(--text-secondary); font: 600 0.72rem var(--font-body); cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .seg button:hover { color: #fff; }
+    .seg button[aria-pressed="true"] { background: rgba(255,255,255,0.09); color: #fff; }
+
+    .btn-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; }
+    .btn-row.two { grid-template-columns: repeat(2, 1fr); }
+    .gen-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      padding: 0.55rem 0.5rem; border-radius: 980px; border: 1px solid var(--card-border);
+      background: transparent; color: #fff; font: 600 0.72rem var(--font-body); cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .gen-btn:hover { border-color: var(--lime); color: var(--lime); }
+    .gen-btn.primary { background: var(--lime); border-color: var(--lime); color: #000; }
+    .gen-btn.primary:hover { filter: brightness(1.08); color: #000; }
+    .gen-btn[aria-pressed="true"] { border-color: var(--lime); color: var(--lime); }
+    .gen-btn svg { width: 12px; height: 12px; }
+
+    .parts-list { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .parts-list li {
+      display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.65rem 0.3rem 0.4rem;
+      border-radius: 980px; border: 1px solid var(--card-border); font-size: 0.68rem;
+      color: rgba(255,255,255,0.75); cursor: default; transition: all 0.15s ease;
+    }
+    .parts-list li.hot { border-color: var(--lime); color: #fff; background: rgba(191,245,73,0.08); }
+    .parts-list .swatch { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+
+    /* ---------- RIGHT: prompts ---------- */
+    .app {
+      display: flex; flex-direction: column; min-height: 0; min-width: 0; height: 100%;
+    }
+
+    .header { text-align: center; padding: 0.5rem 0 1.5rem; flex-shrink: 0; }
+
+    .header-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.35rem 0.9rem; margin-bottom: 1rem; border-radius: 980px;
+      border: 1px solid rgba(191, 245, 73, 0.3); background: rgba(191, 245, 73, 0.05);
+      color: var(--lime); font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.2em; backdrop-filter: blur(10px);
+    }
+    .header-badge svg { width: 12px; height: 12px; }
+
+    .header h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900;
+      letter-spacing: -0.06em; line-height: 0.9; margin-bottom: 0.75rem;
+    }
+    .header h1 .lime { color: var(--lime); }
+    .header h1 .faded {
+      background: linear-gradient(to right, #fff, rgba(255,255,255,0.4));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .header p {
+      font-size: 0.95rem; color: var(--text-secondary); max-width: 500px;
+      margin: 0 auto; line-height: 1.5; font-weight: 300;
+    }
+
+    .tabs-row { display: flex; gap: 0.5rem; flex-shrink: 0; margin-bottom: 1.25rem; }
+
+    .tab {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      padding: 0.85rem 1rem; border-radius: 20px; border: 1px solid var(--card-border);
+      background: var(--card-bg); color: var(--text-secondary); font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative; overflow: hidden;
+    }
+    .tab::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease; border-radius: 20px; }
+    .tab[data-tab="A"]::before { background: linear-gradient(135deg, rgba(191,245,73,0.12), transparent); }
+    .tab[data-tab="B"]::before { background: linear-gradient(135deg, rgba(96,165,250,0.12), transparent); }
+    .tab[data-tab="C"]::before { background: linear-gradient(135deg, rgba(250,204,21,0.12), transparent); }
+    .tab:hover { border-color: rgba(255,255,255,0.12); color: #fff; transform: translateY(-1px); }
+    .tab:hover::before { opacity: 1; }
+    .tab.active { border-color: rgba(255,255,255,0.15); color: #fff; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .tab.active::before { opacity: 1; }
+
+    .tab .tab-letter {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 10px; font-size: 0.75rem;
+      font-weight: 900; font-family: var(--font-display); flex-shrink: 0; transition: all 0.35s ease;
+    }
+    .tab[data-tab="A"] .tab-letter { background: rgba(191,245,73,0.2); color: var(--lime); }
+    .tab[data-tab="B"] .tab-letter { background: rgba(96,165,250,0.2); color: #60a5fa; }
+    .tab[data-tab="C"] .tab-letter { background: rgba(250,204,21,0.2); color: #FACC15; }
+    .tab.active[data-tab="A"] .tab-letter { background: var(--lime); color: #000; }
+    .tab.active[data-tab="B"] .tab-letter { background: #60a5fa; color: #000; }
+    .tab.active[data-tab="C"] .tab-letter { background: #FACC15; color: #000; }
+    .tab .tab-name { position: relative; z-index: 1; }
+
+    .prompt-panel {
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      background: linear-gradient(145deg, rgba(12,14,22,0.92), rgba(6,8,14,0.95));
+      border: 1px solid var(--card-border); border-radius: 28px 28px 0 0; overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--card-border); flex-shrink: 0;
+    }
+    .panel-header-left { display: flex; align-items: center; gap: 0.75rem; }
+
+    .panel-icon {
+      width: 36px; height: 36px; border-radius: 11px; display: flex;
+      align-items: center; justify-content: center; font-size: 0.9rem;
+      font-weight: 900; font-family: var(--font-display); flex-shrink: 0; transition: all 0.35s ease;
+    }
+    .panel-icon.a { background: var(--lime); color: #000; }
+    .panel-icon.b { background: #60a5fa; color: #000; }
+    .panel-icon.c { background: #FACC15; color: #000; }
+
+    .panel-meta .panel-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary); font-weight: 700; }
+    .panel-meta .panel-title { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 1px; }
+    .panel-header-right { display: flex; align-items: center; gap: 0.5rem; }
+
+    .instruction-tag {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.75rem; border-radius: 980px; font-size: 0.65rem; font-weight: 600; white-space: nowrap;
+    }
+    .instruction-tag.img { background: rgba(191,245,73,0.08); color: var(--lime); border: 1px solid rgba(191,245,73,0.15); }
+    .instruction-tag.vid { background: rgba(250,204,21,0.08); color: #FACC15; border: 1px solid rgba(250,204,21,0.15); }
+    .instruction-tag svg { width: 11px; height: 11px; }
+
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.55rem 1.15rem;
+      border-radius: 980px; border: 1px solid var(--card-border); background: transparent;
+      color: var(--text-secondary); font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      transition: all 0.25s ease; font-family: var(--font-body);
+    }
+    .copy-btn:hover { background: var(--lime); color: #000; border-color: var(--lime); transform: scale(1.03); }
+    .copy-btn.copied { background: var(--lime); color: #000; border-color: var(--lime); }
+    .copy-btn svg { width: 14px; height: 14px; }
+
+    .panel-body { flex: 1; min-height: 0; position: relative; }
+    .prompt-content { display: none; position: absolute; inset: 0; opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .prompt-content.active { display: block; opacity: 1; transform: translateY(0); }
+
+    .prompt-text {
+      font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8;
+      color: rgba(255,255,255,0.72); white-space: pre-wrap; word-break: break-word;
+      padding: 1.75rem; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .prompt-text::-webkit-scrollbar { width: 6px; }
+    .prompt-text::-webkit-scrollbar-track { background: transparent; }
+    .prompt-text::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+
+    /* Words driven by the 3D generator controls */
+    .tok {
+      background: rgba(191,245,73,0.12); color: var(--lime); border-radius: 4px;
+      padding: 0 0.2em; transition: background 0.4s ease;
+    }
+    .tok.flash { background: rgba(191,245,73,0.4); }
+
+    @media (max-width: 960px) {
+      body { overflow: auto; height: auto; }
+      .shell { grid-template-columns: 1fr; height: auto; padding: 1.25rem 1rem 0; }
+      .generator { overflow: visible; padding-bottom: 0; }
+      .app { height: 88vh; }
+    }
+
+    @media (max-width: 640px) {
+      .header { padding: 1rem 0 1.25rem; }
+      .header h1 { font-size: clamp(1.5rem, 8vw, 2.2rem); }
+      .header p { font-size: 0.85rem; }
+      .tab { padding: 0.7rem 0.5rem; font-size: 0.72rem; border-radius: 16px; }
+      .tab .tab-name { display: none; }
+      .tab .tab-letter { width: 32px; height: 32px; font-size: 0.85rem; }
+      .tab .tab-subtitle { display: block; font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px; }
+      .panel-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem 1.25rem; }
+      .panel-header-right { width: 100%; justify-content: space-between; }
+      .prompt-text { padding: 1.25rem; font-size: 0.73rem; line-height: 1.7; }
+      .prompt-panel { border-radius: 22px 22px 0 0; }
+      .instruction-tag { font-size: 0.6rem; }
+    }
+    @media (min-width: 641px) { .tab .tab-subtitle { display: none; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orb-1, .bg-orb-2 { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb-1"></div>
+  <div class="bg-orb-2"></div>
+  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+  <!-- Parts and defaults for the 3D generator. JSON only; see SKILL.md for the schema. -->
+  <script type="application/json" id="assetConfig">
+  { "axis": "{{DEFAULT_AXIS}}", "angle": "{{DEFAULT_ANGLE}}", "parts": {{PARTS_JSON}} }
+  </script>
+
+  <div class="shell">
+    <aside class="generator" aria-label="3D asset generator">
+      <div class="gen-head">
+        <div class="gen-title">3D Asset Generator <span>/ {{OBJECT_NAME}}</span></div>
+        <div class="header-badge" style="margin:0">Stand-in</div>
+      </div>
+
+      <div class="viewport" id="viewport">
+        <div class="viewport-hud">
+          <span class="hud-chip" id="hudState">Assembled</span>
+          <span class="hud-chip part" id="hudPart"></span>
+        </div>
+        <div class="viewport-error" id="viewportError">
+          The 3D preview needs WebGL and an internet connection to load three.js. The prompts on the right still work.
+        </div>
+      </div>
+
+      <div class="gen-card">
+        <div class="ctl-row">
+          <div class="ctl-label"><span>Explode</span><output id="explodeVal">0%</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.001" value="0" aria-label="Explode amount">
+        </div>
+
+        <div class="btn-row">
+          <button class="gen-btn primary" id="playOut" title="Space">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg> Deconstruct
+          </button>
+          <button class="gen-btn" id="playIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="18 4 4 12 18 20 18 4"/></svg> Assemble
+          </button>
+          <button class="gen-btn" id="playLoop" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 013-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 01-3 3H3"/></svg> Loop
+          </button>
+        </div>
+
+        <div class="ctl-row">
+          <div class="ctl-label"><span>Explosion axis</span><span>Prompts B + C</span></div>
+          <div class="seg" data-control="axis" role="group" aria-label="Explosion axis">
+            <button data-value="vertical">Vertical</button>
+            <button data-value="diagonal">Diagonal</button>
+            <button data-value="radial">Radial</button>
+          </div>
+        </div>
+
+        <div class="ctl-row">
+          <div class="ctl-label"><span>Camera angle</span><span>Prompt A</span></div>
+          <div class="seg" data-control="angle" role="group" aria-label="Camera angle">
+            <button data-value="three-quarter">3/4</button>
+            <button data-value="straight-on front">Front</button>
+            <button data-value="elevated 45-degree">Elevated</button>
+          </div>
+        </div>
+
+        <div class="btn-row two">
+          <button class="gen-btn" id="exportPng">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg> PNG reference frame
+          </button>
+          <button class="gen-btn" id="exportGlb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg> GLB model
+          </button>
+        </div>
+      </div>
+
+      <div class="gen-card">
+        <div class="ctl-label"><span>Components</span><output id="partCount"></output></div>
+        <ul class="parts-list" id="partsList"></ul>
+      </div>
+    </aside>
+
+    <div class="app">
+      <header class="header">
+        <div class="header-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Scroll-Stop Prompter
+        </div>
+        <h1>{{HEADING_LINE1}} <span class="faded">{{HEADING_LINE2}}</span> <span class="lime">PROMPTS.</span></h1>
+        <p>Set the axis and angle on the left. The highlighted words in the prompts update to match.</p>
+      </header>
+
+      <div class="tabs-row">
+        <button class="tab active" data-tab="A" onclick="switchTab('A')">
+          <span class="tab-letter">A</span>
+          <span class="tab-name">{{TAB_A_NAME}}</span>
+          <span class="tab-subtitle">{{TAB_A_SHORT}}</span>
+        </button>
+        <button class="tab" data-tab="B" onclick="switchTab('B')">
+          <span class="tab-letter">B</span>
+          <span class="tab-name">{{TAB_B_NAME}}</span>
+          <span class="tab-subtitle">{{TAB_B_SHORT}}</span>
+        </button>
+        <button class="tab" data-tab="C" onclick="switchTab('C')">
+          <span class="tab-letter">C</span>
+          <span class="tab-name">Video Transition</span>
+          <span class="tab-subtitle">Video</span>
+        </button>
+      </div>
+
+      <div class="prompt-panel">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-icon a" id="panelIcon">A</div>
+            <div class="panel-meta">
+              <div class="panel-label" id="panelLabel">Prompt A &mdash; Image Generator</div>
+              <div class="panel-title" id="panelTitle">{{TAB_A_NAME}}</div>
+            </div>
+          </div>
+          <div class="panel-header-right">
+            <div class="instruction-tag img" id="panelTag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span id="panelTagText">16:9 &middot; Image Generator</span>
+            </div>
+            <button class="copy-btn" id="copyBtn" onclick="copyCurrentPrompt()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="prompt-content active" id="contentA">
+            <div class="prompt-text">{{PROMPT_A}}</div>
+          </div>
+          <div class="prompt-content" id="contentB">
+            <div class="prompt-text">{{PROMPT_B}}</div>
+          </div>
+          <div class="prompt-content" id="contentC">
+            <div class="prompt-text">{{PROMPT_C}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    const confettiCtx = confettiCanvas.getContext('2d');
+    let confettiPieces = [];
+    let confettiAnimating = false;
+
+    function resizeConfetti() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+    resizeConfetti();
+    window.addEventListener('resize', resizeConfetti);
+
+    const confettiColors = ['#BFF549', '#FACC15', '#60a5fa', '#f472b6', '#a78bfa', '#34d399', '#fb923c', '#fff'];
+
+    function launchConfetti() {
+      confettiPieces = [];
+      for (let i = 0; i < 150; i++) {
+        confettiPieces.push({
+          x: window.innerWidth / 2 + (Math.random() - 0.5) * 200, y: window.innerHeight / 2,
+          vx: (Math.random() - 0.5) * 20, vy: -(Math.random() * 18 + 6),
+          w: Math.random() * 10 + 5, h: Math.random() * 6 + 3,
+          color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+          rotation: Math.random() * 360, rotationSpeed: (Math.random() - 0.5) * 15,
+          gravity: 0.35 + Math.random() * 0.15, opacity: 1,
+          decay: 0.008 + Math.random() * 0.008, shape: Math.random() > 0.5 ? 'rect' : 'circle'
+        });
+      }
+      if (!confettiAnimating) { confettiAnimating = true; animateConfetti(); }
+    }
+
+    function animateConfetti() {
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      let alive = 0;
+      for (const p of confettiPieces) {
+        if (p.opacity <= 0) continue;
+        alive++;
+        p.x += p.vx; p.vy += p.gravity; p.y += p.vy; p.vx *= 0.99;
+        p.rotation += p.rotationSpeed; p.opacity -= p.decay;
+        confettiCtx.save();
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate((p.rotation * Math.PI) / 180);
+        confettiCtx.globalAlpha = Math.max(0, p.opacity);
+        confettiCtx.fillStyle = p.color;
+        if (p.shape === 'rect') { confettiCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h); }
+        else { confettiCtx.beginPath(); confettiCtx.arc(0, 0, p.w/2, 0, Math.PI*2); confettiCtx.fill(); }
+        confettiCtx.restore();
+      }
+      if (alive > 0) { requestAnimationFrame(animateConfetti); }
+      else { confettiAnimating = false; confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+    }
+
+    // --- Prompt tokens: {axis} and {angle} in the prompt text follow the 3D generator controls ---
+    const assetConfig = (() => {
+      try { return JSON.parse(document.getElementById('assetConfig').textContent); }
+      catch (e) { console.error('Bad assetConfig JSON', e); return { axis: 'vertical', angle: 'three-quarter', parts: [] }; }
+    })();
+    const promptTokens = { axis: assetConfig.axis || 'vertical', angle: assetConfig.angle || 'three-quarter' };
+    const promptSources = [...document.querySelectorAll('.prompt-text')].map(el => ({ el, text: el.textContent }));
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderPrompts(flashKey) {
+      for (const { el, text } of promptSources) {
+        el.innerHTML = escapeHtml(text).replace(/\{(axis|angle)\}/g, (_, key) =>
+          `<span class="tok${key === flashKey ? ' flash' : ''}" data-tok="${key}">${escapeHtml(promptTokens[key])}</span>`);
+      }
+      if (flashKey) setTimeout(() => document.querySelectorAll('.tok.flash').forEach(t => t.classList.remove('flash')), 450);
+    }
+
+    function setPromptToken(key, value) {
+      if (promptTokens[key] === value) return;
+      promptTokens[key] = value;
+      renderPrompts(key);
+    }
+    renderPrompts();
+
+    const tabsData = {
+      A: { label: 'Prompt A &mdash; Image Generator', title: '{{TAB_A_NAME}}', iconClass: 'a', tagClass: 'img',
+        tagIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+        tagText: '16:9 &middot; Image Generator' },
+      B: { label: 'Prompt B &mdash; Image Generator', title: '{{TAB_B_NAME}}', iconClass: 'b', tagClass: 'img',
+        tagIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>',
+        tagText: '16:9 &middot; Reference Prompt A' },
+      C: { label: 'Prompt C &mdash; Video Model', title: 'Video Transition', iconClass: 'c', tagClass: 'vid',
+        tagIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+        tagText: 'Start: A &middot; End: B' }
+    };
+
+    let currentTab = 'A';
+
+    function switchTab(tab) {
+      if (tab === currentTab) return;
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+      const info = tabsData[tab];
+      const icon = document.getElementById('panelIcon');
+      icon.textContent = tab; icon.className = 'panel-icon ' + info.iconClass;
+      document.getElementById('panelLabel').innerHTML = info.label;
+      document.getElementById('panelTitle').textContent = info.title;
+      const tag = document.getElementById('panelTag');
+      tag.className = 'instruction-tag ' + info.tagClass;
+      tag.innerHTML = info.tagIcon + ' <span>' + info.tagText + '</span>';
+      const btn = document.getElementById('copyBtn');
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy';
+      document.querySelectorAll('.prompt-content').forEach(c => c.classList.remove('active'));
+      requestAnimationFrame(() => { document.getElementById('content' + tab).classList.add('active'); });
+      // Let the 3D generator show the matching state (A = assembled, B = exploded, C = play)
+      window.dispatchEvent(new CustomEvent('prompttab', { detail: tab }));
+    }
+
+    function copyCurrentPrompt() {
+      const content = document.querySelector('.prompt-content.active .prompt-text');
+      const text = content.textContent;
+      const btn = document.getElementById('copyBtn');
+      navigator.clipboard.writeText(text).then(() => {
+        launchConfetti();
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy';
+        }, 2000);
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.closest('input, select, textarea')) return;
+      if (e.key === '1') switchTab('A');
+      if (e.key === '2') switchTab('B');
+      if (e.key === '3') switchTab('C');
+      if ((e.metaKey || e.ctrlKey) && e.key === 'c' && !window.getSelection().toString()) { e.preventDefault(); copyCurrentPrompt(); }
+    });
+  </script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+    import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+    import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+    const viewport = document.getElementById('viewport');
+    const parts = Array.isArray(assetConfig.parts) ? assetConfig.parts : [];
+    const objectSlug = (document.title.split('—')[1] || 'asset').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'asset';
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // --- Renderer / scene: pure white studio, matching the prompts ---
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+    } catch (e) {
+      document.getElementById('viewportError').style.display = 'flex';
+      throw e;
+    }
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    viewport.prepend(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const camera = new THREE.PerspectiveCamera(32, 16 / 9, 0.05, 200);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+
+    const key = new THREE.DirectionalLight(0xffffff, 1.6);
+    key.position.set(4, 9, 6);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.radius = 6;
+    key.shadow.bias = -0.0005;
+    scene.add(key);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xe8e8e8, 0.6));
+
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: 0.12 }));
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // --- Build the assembly from the parts list ---
+    function seeded(i, salt) {
+      const x = Math.sin((i + 1) * 12.9898 + salt * 78.233) * 43758.5453;
+      return x - Math.floor(x);
+    }
+
+    function buildGeometry(p) {
+      const s = p.size || [1, 1, 1];
+      switch (p.shape) {
+        case 'cylinder': return new THREE.CylinderGeometry(s[0], s[1] ?? s[0], s[2] ?? 1, 48);
+        case 'sphere':   return new THREE.SphereGeometry(s[0], 48, 24);
+        case 'torus':    return new THREE.TorusGeometry(s[0], s[1] ?? s[0] * 0.25, 24, 64);
+        case 'cone':     return new THREE.ConeGeometry(s[0], s[1] ?? 1, 48);
+        case 'capsule':  return new THREE.CapsuleGeometry(s[0], s[1] ?? 1, 8, 24);
+        default: {
+          const r = Math.min(s[0], s[1], s[2]) * 0.22;
+          return new RoundedBoxGeometry(s[0], s[1], s[2], 3, r);
+        }
+      }
+    }
+
+    const assembly = new THREE.Group();
+    scene.add(assembly);
+
+    const items = parts.map((p, i) => {
+      const mat = new THREE.MeshStandardMaterial({
+        color: p.color || '#d9dbe0',
+        metalness: p.metalness ?? 0.2,
+        roughness: p.roughness ?? 0.5,
+        transparent: (p.opacity ?? 1) < 1,
+        opacity: p.opacity ?? 1
+      });
+      const mesh = new THREE.Mesh(buildGeometry(p), mat);
+      mesh.name = p.name || `Part ${i + 1}`;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      const home = new THREE.Vector3(...(p.pos || [0, 0, 0]));
+      const homeRot = new THREE.Euler(...(p.rot || [0, 0, 0]));
+      mesh.position.copy(home);
+      mesh.rotation.copy(homeRot);
+      mesh.userData.index = i;
+      assembly.add(mesh);
+      return { mesh, home, homeRot, offset: new THREE.Vector3(), spin: new THREE.Vector3(), delay: 0 };
+    });
+
+    // Normalize: centre on X/Z, sit on the ground, largest dimension = 3 units
+    const rawBox = new THREE.Box3().setFromObject(assembly);
+    const rawSize = rawBox.getSize(new THREE.Vector3());
+    const rawCenter = rawBox.getCenter(new THREE.Vector3());
+    const maxDim = Math.max(rawSize.x, rawSize.y, rawSize.z) || 1;
+    const scale = 3 / maxDim;
+    assembly.scale.setScalar(scale);
+    assembly.position.set(-rawCenter.x * scale, -rawBox.min.y * scale, -rawCenter.z * scale);
+
+    // --- Explosion layout per axis (in raw part units) ---
+    const AXES = {
+      vertical: new THREE.Vector3(0, 1, 0),
+      diagonal: new THREE.Vector3(0.55, 1, 0.4).normalize(),
+      radial: null
+    };
+
+    function layout(axisName) {
+      const n = items.length;
+      if (!n) return;
+      const axis = AXES[axisName];
+      const spread = maxDim * 1.5;
+      const order = items.map((it, i) => {
+        const rel = it.home.clone().sub(rawCenter);
+        return { i, key: axis ? rel.dot(axis) : rel.length() + seeded(i, 3) * 1e-3 };
+      }).sort((a, b) => a.key - b.key);
+
+      order.forEach(({ i }, rank) => {
+        const it = items[i];
+        const rel = it.home.clone().sub(rawCenter);
+        if (axis) {
+          // Stack along the axis in assembled order, with a gentle outward drift
+          const along = n > 1 ? (rank / (n - 1)) * spread : 0;
+          it.offset.copy(axis).multiplyScalar(along).add(new THREE.Vector3(rel.x, 0, rel.z).multiplyScalar(0.35));
+        } else {
+          // Radial burst: everything flies away from the centre, lifted off the ground
+          const dir = rel.lengthSq() > 1e-6 ? rel.clone().normalize()
+            : new THREE.Vector3(seeded(i, 1) - 0.5, seeded(i, 2) - 0.2, seeded(i, 4) - 0.5).normalize();
+          it.offset.copy(dir).multiplyScalar(maxDim * (0.45 + 0.5 * rank / Math.max(1, n - 1)));
+          it.offset.y += maxDim * 0.55;
+        }
+        it.spin.set(seeded(i, 5) - 0.5, seeded(i, 6) - 0.5, seeded(i, 7) - 0.5).multiplyScalar(0.6);
+        // Cascade: outer shell leaves first
+        const outer = axis ? Math.abs(rank - (n - 1) / 2) / Math.max(1, (n - 1) / 2) : rank / Math.max(1, n - 1);
+        it.delay = (1 - outer) * 0.4;
+      });
+    }
+
+    const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    let explode = 0;
+
+    function applyExplode(t) {
+      explode = t;
+      for (const it of items) {
+        const local = ease(THREE.MathUtils.clamp((t - it.delay) / 0.6, 0, 1));
+        it.mesh.position.copy(it.home).addScaledVector(it.offset, local);
+        it.mesh.rotation.set(
+          it.homeRot.x + it.spin.x * local,
+          it.homeRot.y + it.spin.y * local,
+          it.homeRot.z + it.spin.z * local
+        );
+      }
+      explodeInput.value = t;
+      explodeVal.textContent = Math.round(t * 100) + '%';
+      hudState.textContent = t < 0.01 ? 'Assembled' : t > 0.99 ? 'Exploded' : 'Transition';
+    }
+
+    // --- Camera: framed once over the full motion, then locked (like Prompt C's tripod shot) ---
+    const ANGLES = {
+      'three-quarter':      new THREE.Vector3(1, 0.55, 1.25),
+      'straight-on front':  new THREE.Vector3(0, 0.18, 1),
+      'elevated 45-degree': new THREE.Vector3(0.35, 1.05, 1)
+    };
+    let angleName = ANGLES[promptTokens.angle] ? promptTokens.angle : 'three-quarter';
+    let axisName = AXES[promptTokens.axis] !== undefined ? promptTokens.axis : 'vertical';
+
+    function frameCamera() {
+      const keep = explode;
+      const box = new THREE.Box3();
+      applyExplode(0); box.expandByObject(assembly);
+      applyExplode(1); box.expandByObject(assembly);
+      applyExplode(keep);
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      const vFov = THREE.MathUtils.degToRad(camera.fov / 2);
+      const hFov = Math.atan(Math.tan(vFov) * camera.aspect);
+      const dist = sphere.radius / Math.sin(Math.min(vFov, hFov)) * 1.02;
+      controls.target.copy(sphere.center);
+      camera.position.copy(sphere.center).addScaledVector(ANGLES[angleName].clone().normalize(), dist);
+      camera.near = dist / 100; camera.far = dist * 10;
+      camera.updateProjectionMatrix();
+      controls.update();
+    }
+
+    // --- Playback ---
+    let anim = null;          // { from, to, start, dur }
+    let looping = false;
+
+    function play(to, dur = 2600, then) {
+      anim = { from: explode, to, start: performance.now(), dur: dur * Math.abs(to - explode) || 1, then };
+    }
+    function stepAnim(now) {
+      if (!anim) return;
+      const k = Math.min(1, (now - anim.start) / anim.dur);
+      applyExplode(anim.from + (anim.to - anim.from) * k);
+      if (k >= 1) {
+        const done = anim;
+        anim = null;
+        if (looping) setTimeout(() => looping && !anim && play(done.to > 0.5 ? 0 : 1), 900);
+        else if (done.then) done.then();
+      }
+    }
+
+    // --- UI wiring ---
+    const explodeInput = document.getElementById('explode');
+    const explodeVal = document.getElementById('explodeVal');
+    const hudState = document.getElementById('hudState');
+    const hudPart = document.getElementById('hudPart');
+    const loopBtn = document.getElementById('playLoop');
+
+    function stopLoop() { looping = false; loopBtn.setAttribute('aria-pressed', 'false'); }
+
+    explodeInput.addEventListener('input', e => { anim = null; stopLoop(); applyExplode(+e.target.value); });
+    document.getElementById('playOut').addEventListener('click', () => { stopLoop(); play(1); });
+    document.getElementById('playIn').addEventListener('click', () => { stopLoop(); play(0); });
+    loopBtn.addEventListener('click', () => {
+      looping = !looping;
+      loopBtn.setAttribute('aria-pressed', String(looping));
+      if (looping) play(explode > 0.5 ? 0 : 1); else anim = null;
+    });
+
+    function bindSeg(name, current, onPick) {
+      const seg = document.querySelector(`.seg[data-control="${name}"]`);
+      const sync = v => seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.value === v)));
+      sync(current);
+      seg.addEventListener('click', e => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        sync(b.dataset.value);
+        onPick(b.dataset.value);
+        setPromptToken(name, b.dataset.value);
+      });
+    }
+    bindSeg('axis', axisName, v => { axisName = v; layout(v); applyExplode(explode); frameCamera(); });
+    bindSeg('angle', angleName, v => { angleName = v; frameCamera(); });
+
+    window.addEventListener('prompttab', e => {
+      stopLoop();
+      if (e.detail === 'A') play(0, 900);
+      if (e.detail === 'B') play(1, 900);
+      if (e.detail === 'C') { applyExplode(0); setTimeout(() => play(1), 500); }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.code !== 'Space' || e.target.closest('input, button, select, textarea')) return;
+      e.preventDefault();
+      stopLoop();
+      play(explode > 0.5 ? 0 : 1);
+    });
+
+    // Parts list + hover highlight (list <-> viewport)
+    const partsList = document.getElementById('partsList');
+    document.getElementById('partCount').textContent = items.length;
+    items.forEach((it, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="swatch"></span>`;
+      li.querySelector('.swatch').style.background = '#' + it.mesh.material.color.getHexString();
+      li.append(it.mesh.name);
+      li.addEventListener('mouseenter', () => highlight(i));
+      li.addEventListener('mouseleave', () => highlight(-1));
+      partsList.append(li);
+    });
+
+    let hot = -1;
+    function highlight(i) {
+      if (i === hot) return;
+      if (hot >= 0) { items[hot].mesh.material.emissive.setHex(0x000000); partsList.children[hot].classList.remove('hot'); }
+      hot = i;
+      if (i >= 0) {
+        items[i].mesh.material.emissive.set('#BFF549').multiplyScalar(0.35);
+        partsList.children[i].classList.add('hot');
+        hudPart.textContent = items[i].mesh.name;
+        hudPart.style.display = 'inline-block';
+      } else {
+        hudPart.style.display = 'none';
+      }
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    renderer.domElement.addEventListener('pointermove', e => {
+      const r = renderer.domElement.getBoundingClientRect();
+      pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(assembly.children, false)[0];
+      highlight(hit ? hit.object.userData.index : -1);
+    });
+    renderer.domElement.addEventListener('pointerleave', () => highlight(-1));
+
+    // --- Exports ---
+    function download(blob, name) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    // 1920x1080 frame of the current state: a composition reference for the image generator
+    document.getElementById('exportPng').addEventListener('click', () => {
+      const prev = renderer.getSize(new THREE.Vector2());
+      const prevRatio = renderer.getPixelRatio();
+      const wasHot = hot;
+      highlight(-1);
+      renderer.setPixelRatio(1);
+      renderer.setSize(1920, 1080, false);
+      camera.aspect = 16 / 9; camera.updateProjectionMatrix();
+      renderer.render(scene, camera);
+      // Read the drawing buffer in the same task as the render (no preserveDrawingBuffer needed)
+      const a = document.createElement('a');
+      a.href = renderer.domElement.toDataURL('image/png');
+      a.download = `${objectSlug}-${explode < 0.5 ? 'assembled' : 'exploded'}.png`;
+      a.click();
+      renderer.setPixelRatio(prevRatio);
+      renderer.setSize(prev.x, prev.y, false);
+      resize();
+      highlight(wasHot);
+    });
+
+    document.getElementById('exportGlb').addEventListener('click', () => {
+      new GLTFExporter().parse(assembly, glb => {
+        download(new Blob([glb], { type: 'model/gltf-binary' }), `${objectSlug}.glb`);
+      }, err => console.error(err), { binary: true });
+    });
+
+    // --- Resize + loop ---
+    function resize() {
+      const w = viewport.clientWidth, h = viewport.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(viewport);
+    resize();
+
+    layout(axisName);
+    applyExplode(0);
+    frameCamera();
+
+    renderer.setAnimationLoop(now => {
+      stepAnim(now);
+      controls.update();
+      renderer.render(scene, camera);
+    });
+
+    // Show off the stand-in once on load, then settle back on the assembled state (tab A)
+    if (!reduceMotion && items.length) {
+      setTimeout(() => {
+        if (!anim && explode === 0) play(1, 2600, () => setTimeout(() => !anim && !looping && play(0, 1600), 1000));
+      }, 700);
+    }
+  </script>
+</body>
+</html>

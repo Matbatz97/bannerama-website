@@ -1,0 +1,21 @@
+[
+  {
+    "id": "55715e44-9a02-40dc-8072-79bb26e29e30",
+    "title": "Welcome to your simple To-Do app! 👋",
+    "completed": true,
+    "createdAt": "2026-10-19T13:17:46.523Z",
+    "updatedAt": "2026-10-19T13:21:14.008Z"
+  },
+  {
+    "id": "7db81b0c-8ab5-43ad-b763-8595462aad63",
+    "title": "Click the circle to mark this task complete",
+    "completed": true,
+    "createdAt": "2026-10-19T13:17:46.524Z"
+  },
+  {
+    "id": "dda61ef3-ca80-44de-b357-57212e940b6b",
+    "title": "Try adding a new task using the input above",
+    "completed": false,
+    "createdAt": "2026-10-19T13:17:46.524Z"
+  }
+]
